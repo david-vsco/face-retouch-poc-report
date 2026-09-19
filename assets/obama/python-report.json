@@ -1,0 +1,80 @@
+{
+  "faces": 1,
+  "face_width_px_min": 225.6,
+  "guided_radius": 3,
+  "guided_eps": 0.004,
+  "heal_max_spot_px": 7,
+  "spots_detected": 4,
+  "spots_healed": 4,
+  "per_face": [
+    {
+      "face": 0,
+      "face_width_px": 225.6,
+      "skin_px": 46182,
+      "delta_L": -0.275,
+      "delta_a": -0.081,
+      "delta_b": -0.16,
+      "delta_E_mean_lab": 0.328,
+      "hf_energy_ratio": 0.6494,
+      "dark_circle_lift_L": 2.200775623321533
+    }
+  ],
+  "outside_mask_diff": {
+    "max_abs_u8": 6,
+    "mean_abs_u8": 0.0017,
+    "pixels": 1104858
+  },
+  "outside_refined_mask_diff": {
+    "max_abs_u8": 0,
+    "mean_abs_u8": 0.0,
+    "pixels": 1104333
+  },
+  "skin_hf_energy_ratio": 0.6494,
+  "even_tone": {
+    "mean_shift_before_recenter": {
+      "L": 0.0,
+      "a": 0.036765098571777344,
+      "b": 0.00345611572265625
+    },
+    "mean_shift_after_recenter": {
+      "L": 0.0,
+      "a": 0.0,
+      "b": 0.0
+    }
+  },
+  "skin_tone_noop": true,
+  "mask_refined_px": 46707,
+  "timings_ms": {
+    "detect": 443.6,
+    "landmarks": 31.4,
+    "mask_refined": 67.6,
+    "frequency_separation": 197.4,
+    "base_smoothed": 182.6,
+    "heal": 75.2,
+    "even_tone": 155.6,
+    "dark_circles": 133.0,
+    "skin_tone": 0.0,
+    "recombine": 48.8,
+    "report": 153.7
+  },
+  "total_ms": 1488.9,
+  "elapsed_ms": 1523.5,
+  "sample": "obama",
+  "source": "samples/obama_portrait.jpg",
+  "size": [
+    960,
+    1199
+  ],
+  "params": {
+    "smooth": 0.6,
+    "texture_retain": 0.8,
+    "heal": true,
+    "heal_max_spot_px": null,
+    "even_tone": 0.5,
+    "dark_circles": 0.5,
+    "skin_tone_shift": 0.0,
+    "guided_radius": null,
+    "guided_eps": 0.004,
+    "max_faces": 6
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "artifacts" : {
+    "before" : "\/tmp\/face-retouch-compare-20260919-010431\/swift\/before.png",
+    "mask_vision" : "\/tmp\/face-retouch-compare-20260919-010431\/swift\/mask_vision.png",
+    "python" : "\/tmp\/face-retouch-compare-20260919-010431\/swift\/python.png",
+    "strip" : "\/tmp\/face-retouch-compare-20260919-010431\/swift\/strip.png",
+    "vision" : "\/tmp\/face-retouch-compare-20260919-010431\/swift\/vision.png"
+  },
+  "reports" : {
+    "vision" : {
+      "detect_ms" : 298.5,
+      "diff_vs_python_golden" : {
+        "max_abs_u8" : 54,
+        "mean_abs_u8" : 0.086999999999999994,
+        "pixels" : 1151040
+      },
+      "face_width_px_min" : 226.68868958562314,
+      "faces" : 1,
+      "guided_eps" : 0.0040000001899898052,
+      "guided_radius" : 4,
+      "landmarker" : "vision",
+      "mask_refined_px" : 44463,
+      "smooth" : 0.60000002384185791,
+      "texture_retain" : 0.80000001192092896,
+      "timings_ms" : {
+        "base_smoothed" : 118.2,
+        "frequency_separation" : 64.099999999999994,
+        "mask_coarse" : 19.399999999999999,
+        "mask_refined" : 42.600000000000001,
+        "recombine" : 4.2999999999999998
+      },
+      "total_ms" : 248.59999999999999
+    }
+  }
+}

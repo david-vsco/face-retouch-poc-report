@@ -1,0 +1,35 @@
+{
+  "artifacts" : {
+    "before" : "\/Users\/admin\/Library\/Developer\/CoreSimulator\/Devices\/2DF1D57E-49DF-461D-9187-B3AC3975A571\/data\/Containers\/Data\/Application\/D6EB630C-5DF1-4CDB-9772-FD85BB05FBD3\/Library\/Caches\/face-retouch-poc\/obama\/before.png",
+    "mask_vision" : "\/Users\/admin\/Library\/Developer\/CoreSimulator\/Devices\/2DF1D57E-49DF-461D-9187-B3AC3975A571\/data\/Containers\/Data\/Application\/D6EB630C-5DF1-4CDB-9772-FD85BB05FBD3\/Library\/Caches\/face-retouch-poc\/obama\/mask_vision.png",
+    "python" : "\/Users\/admin\/Library\/Developer\/CoreSimulator\/Devices\/2DF1D57E-49DF-461D-9187-B3AC3975A571\/data\/Containers\/Data\/Application\/D6EB630C-5DF1-4CDB-9772-FD85BB05FBD3\/Library\/Caches\/face-retouch-poc\/obama\/python.png",
+    "strip" : "\/Users\/admin\/Library\/Developer\/CoreSimulator\/Devices\/2DF1D57E-49DF-461D-9187-B3AC3975A571\/data\/Containers\/Data\/Application\/D6EB630C-5DF1-4CDB-9772-FD85BB05FBD3\/Library\/Caches\/face-retouch-poc\/obama\/strip.png",
+    "vision" : "\/Users\/admin\/Library\/Developer\/CoreSimulator\/Devices\/2DF1D57E-49DF-461D-9187-B3AC3975A571\/data\/Containers\/Data\/Application\/D6EB630C-5DF1-4CDB-9772-FD85BB05FBD3\/Library\/Caches\/face-retouch-poc\/obama\/vision.png"
+  },
+  "reports" : {
+    "vision" : {
+      "detect_ms" : 133.30000000000001,
+      "diff_vs_python_golden" : {
+        "max_abs_u8" : 73,
+        "mean_abs_u8" : 0.15290000000000001,
+        "pixels" : 1151040
+      },
+      "face_width_px_min" : 73.154201111483417,
+      "faces" : 1,
+      "guided_eps" : 0.0040000001899898052,
+      "guided_radius" : 2,
+      "landmarker" : "vision",
+      "mask_refined_px" : 8440,
+      "smooth" : 0.60000002384185791,
+      "texture_retain" : 0.80000001192092896,
+      "timings_ms" : {
+        "base_smoothed" : 5119.6999999999998,
+        "frequency_separation" : 4670.8999999999996,
+        "mask_coarse" : 90.799999999999997,
+        "mask_refined" : 2243.3000000000002,
+        "recombine" : 248.30000000000001
+      },
+      "total_ms" : 12373
+    }
+  }
+}

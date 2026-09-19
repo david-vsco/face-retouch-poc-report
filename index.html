@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Face retouch PoC — Vision (Swift / RN) vs Python</title>
+<style>
+  :root { color-scheme: light dark; --bg:#0b0c0f; --card:#15171c; --text:#e8eaed; --muted:#9aa0a6; --accent:#8ab4f8; --border:#2a2e37; }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f6f7f9; --card:#fff; --text:#202124; --muted:#5f6368; --accent:#1a73e8; --border:#dadce0; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5; }
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  h1 { font-size: 1.75rem; margin: 0 0 .5rem; }
+  h2 { font-size: 1.25rem; margin: 2rem 0 .75rem; }
+  .muted { color: var(--muted); }
+  .badge { display:inline-block; font-size:.75rem; padding:.15rem .5rem; border:1px solid var(--border);
+    border-radius:999px; color:var(--muted); margin-right:.35rem; }
+  .card { background: var(--card); border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; margin:1rem 0; }
+  table { width:100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align:left; padding:.55rem .6rem; border-bottom:1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight:600; }
+  img.strip { width:100%; border-radius:8px; border:1px solid var(--border); background:#111; }
+  .grid { display:grid; gap:1rem; grid-template-columns: 1fr; }
+  @media (min-width: 800px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+  .warn { border-left: 3px solid #f9ab00; padding-left: .75rem; }
+  a { color: var(--accent); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; }
+  footer { margin-top: 3rem; color: var(--muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+<main>
+  <p>
+    <span class="badge">TEMP PoC</span>
+    <span class="badge">Not production</span>
+    <span class="badge">Vision landmarker</span>
+  </p>
+  <h1>Classical face retouch — Vision (Swift &amp; RN) vs Python</h1>
+  <p class="muted">Side-by-side of Shiyu’s Python classical golden vs a Swift Vision port (standalone CLI) and the same core running inside the studio-next iOS app (Expo module). Sample: public-domain US federal portrait <strong>obama</strong> (960×1199).</p>
+
+  <div class="card">
+    <strong>Sources</strong>
+    <ul>
+      <li>Python golden: <code>vsco/ai-lab-eval</code> classical pipeline (MediaPipe landmarks + full stages)</li>
+      <li>Swift CLI: Metro-free smoke on <a href="https://github.com/vsco/studio-next/pull/570">studio-next PR 570</a></li>
+      <li>RN / app: <code>FaceRetouchPoc</code> module inside studio-next Debug simulator (same classical core)</li>
+    </ul>
+  </div>
+
+  <h2>1. Source &amp; Python golden</h2>
+  <div class="grid two">
+    <div class="card">
+      <p class="muted">Before</p>
+      <img class="strip" src="assets/obama/before.jpg" alt="obama before" />
+    </div>
+    <div class="card">
+      <p class="muted">Python after (full classical pipeline)</p>
+      <img class="strip" src="assets/obama/after_python.jpg" alt="obama python after" />
+    </div>
+  </div>
+
+  <h2>2. Metrics (obama)</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th></th><th>Python golden</th><th>Swift CLI (Release)</th><th>RN / studio-next (Debug sim)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Faces</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td>Face width (px)</td><td>225.6</td><td><strong>226.7</strong></td><td><strong>73.2</strong> ⚠️</td></tr>
+        <tr><td>Mask refined (px)</td><td>46 707</td><td>44 463</td><td>8 440</td></tr>
+        <tr><td>Guided radius</td><td>3</td><td>4</td><td>2</td></tr>
+        <tr><td>Detect (ms)</td><td>444</td><td>299</td><td>133</td></tr>
+        <tr><td>Pipeline / classical (ms)</td><td>1 489 (full*)</td><td>249 (minimal core)</td><td>12 373 (Debug)</td></tr>
+        <tr><td>vs Python pixel diff</td><td>—</td><td>mean 0.087 · max 54</td><td>mean 0.153 · max 73</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin-top:0.75rem">*Python total includes stages <em>not</em> ported in the Swift PoC (heal, even_tone, dark_circles, skin_probability, …). Pixel diffs vs the golden are expected.</p>
+  </div>
+
+  <div class="card warn">
+    <strong>RN face-width quirk</strong>
+    <p>Same golden JPEG, but the Debug simulator run reported ~73 px face width vs ~226 on Swift CLI / Python. That shrinks the mask and worsens the vs-Python diff. Treat <strong>Swift CLI</strong> as the geometry reference until this is fixed. Debug classical time is also ~50× slower than Release — use Release for product timing.</p>
+  </div>
+
+  <h2>3. Contact strips (before | python | vision)</h2>
+  <div class="card">
+    <p class="muted">Swift CLI (Release)</p>
+    <img class="strip" src="assets/obama/swift-strip.png" alt="Swift strip before | python | vision" />
+  </div>
+  <div class="card">
+    <p class="muted">RN / studio-next module (Debug sim)</p>
+    <img class="strip" src="assets/obama/rn-strip.png" alt="RN strip before | python | vision" />
+  </div>
+
+  <h2>4. Skin masks</h2>
+  <div class="grid two">
+    <div class="card">
+      <p class="muted">Python mask</p>
+      <img class="strip" src="assets/masks/mask_python.png" alt="python mask" />
+    </div>
+    <div class="card">
+      <p class="muted">Swift Vision mask</p>
+      <img class="strip" src="assets/masks/swift-mask_vision.png" alt="swift vision mask" />
+    </div>
+  </div>
+  <div class="card">
+    <p class="muted">RN Vision mask (smaller — face-width quirk)</p>
+    <img class="strip" src="assets/masks/rn-mask_vision.png" alt="rn vision mask" />
+  </div>
+
+  <h2>5. What was ported</h2>
+  <div class="card">
+    <p><strong>In Swift PoC:</strong> Vision landmarks → soft skin mask → guided-filter frequency separation → base smooth → masked composite.</p>
+    <p><strong>Not ported:</strong> MediaPipe landmarks (optional flag / legal), spot heal, even_tone, dark_circles, YCbCr skin probability.</p>
+    <p><strong>Production default:</strong> Vision (Apple frameworks only). MediaPipe is a temporary parity bridge pending legal review.</p>
+  </div>
+
+  <h2>6. Raw reports</h2>
+  <ul>
+    <li><a href="assets/obama/python-report.json">python-report.json</a></li>
+    <li><a href="assets/obama/swift-report.json">swift-report.json</a></li>
+    <li><a href="assets/obama/rn-report.json">rn-report.json</a></li>
+  </ul>
+
+  <footer>
+    Generated 2026-09-19 · TEMP proof-of-concept for VSCO Studio Pro classical face retouch ·
+    Images: public-domain US federal government works (17 U.S.C. § 105) ·
+    Repo: <a href="https://github.com/david-vsco/face-retouch-poc-report">david-vsco/face-retouch-poc-report</a>
+  </footer>
+</main>
+</body>
+</html>
