@@ -37,6 +37,7 @@
     <span class="badge">TEMP PoC</span>
     <span class="badge">Not production</span>
     <span class="badge">Vision landmarker</span>
+    <span class="badge">MediaPipe (sim)</span>
   </p>
   <h1>Classical face retouch — Vision (Swift &amp; RN) vs Python</h1>
   <p class="muted">Side-by-side of Shiyu’s Python classical golden vs a Swift Vision port (standalone CLI) and the same core running inside the studio-next iOS app (Expo module). Sample: public-domain US federal portrait <strong>obama</strong> (960×1199).</p>
@@ -113,14 +114,50 @@
     <img class="strip" src="assets/masks/rn-mask_vision.png" alt="rn vision mask" />
   </div>
 
-  <h2>5. What was ported</h2>
+  <h2>5. MediaPipe arm (bare mac / sim smoke) — 2026-09-19</h2>
+  <div class="card">
+    <p>Added via <code>scripts/face-retouch-sim-smoke.sh</code> on bare david-mac (runtime-downloaded MediaPipe pods + model — <strong>not bundled; no legal clearance claimed</strong>). Full tables in <a href="assets/mediapipe/ARTIFACTS-README.md">artifacts README</a> and <a href="https://github.com/vsco/studio-next/pull/570">PR 570</a>.</p>
+    <table>
+      <thead><tr><th>sample</th><th>arm</th><th>face_width (python)</th><th>mask IoU@0.5</th><th>vs python mean/max u8</th></tr></thead>
+      <tbody>
+        <tr><td>obama</td><td>MediaPipe (sim)</td><td>225.2 (225.6)</td><td><strong>0.946</strong></td><td>0.079 / 54</td></tr>
+        <tr><td>obama</td><td>Vision (macOS)</td><td>226.1 (225.6)</td><td><strong>0.852</strong></td><td>0.088 / 54</td></tr>
+        <tr><td>obama</td><td>Vision (sim, degraded)</td><td>73.2 (225.6)</td><td>0.149</td><td>0.153 / 73</td></tr>
+        <tr><td>jemison</td><td>MediaPipe (sim)</td><td>163.1 (163.1)</td><td><strong>0.919</strong></td><td>0.047 / 33</td></tr>
+        <tr><td>jemison</td><td>Vision (macOS)</td><td>164.9 (163.1)</td><td><strong>0.878</strong></td><td>0.048 / 32</td></tr>
+        <tr><td>jemison</td><td>Vision (sim, degraded)</td><td>51.9 (163.1)</td><td>0.169</td><td>0.058 / 47</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">MediaPipe ≈ Python geometry (same landmark source). Vision macOS is the Vision reference; Vision-on-sim remains the known degraded quirk.</p>
+  </div>
+  <div class="card">
+    <p class="muted">obama sim strip — before | python | mediapipe | vision</p>
+    <img class="strip" src="assets/mediapipe/obama-sim-strip.png" alt="obama MediaPipe sim strip" />
+  </div>
+  <div class="card">
+    <p class="muted">jemison sim strip — before | python | mediapipe | vision</p>
+    <img class="strip" src="assets/mediapipe/jemison-sim-strip.png" alt="jemison MediaPipe sim strip" />
+  </div>
+  <div class="grid two">
+    <div class="card">
+      <p class="muted">obama MediaPipe mask (sim)</p>
+      <img class="strip" src="assets/masks/obama-mask_mediapipe.png" alt="obama mediapipe mask" />
+    </div>
+    <div class="card">
+      <p class="muted">jemison MediaPipe mask (sim)</p>
+      <img class="strip" src="assets/masks/jemison-mask_mediapipe.png" alt="jemison mediapipe mask" />
+    </div>
+  </div>
+
+  <h2>6. What was ported</h2>
+
   <div class="card">
     <p><strong>In Swift PoC:</strong> Vision landmarks → soft skin mask → guided-filter frequency separation → base smooth → masked composite.</p>
     <p><strong>Not ported:</strong> MediaPipe landmarks (optional flag / legal), spot heal, even_tone, dark_circles, YCbCr skin probability.</p>
     <p><strong>Production default:</strong> Vision (Apple frameworks only). MediaPipe is a temporary parity bridge pending legal review.</p>
   </div>
 
-  <h2>6. Raw reports</h2>
+  <h2>7. Raw reports</h2>
   <ul>
     <li><a href="assets/obama/python-report.json">python-report.json</a></li>
     <li><a href="assets/obama/swift-report.json">swift-report.json</a></li>

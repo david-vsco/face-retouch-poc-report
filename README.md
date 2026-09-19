@@ -1,9 +1,9 @@
 # Face retouch PoC report (public)
 
-TEMP comparison: Python classical golden vs Swift Vision CLI vs studio-next (`FaceRetouchPoc`) on the **obama** sample.
+TEMP comparison: Python classical golden vs **Vision** (Swift CLI / studio-next) vs **MediaPipe** (iOS sim smoke).
 
 **Live page:** https://david-vsco.github.io/face-retouch-poc-report/
 
-Not production. Vision-only (MediaPipe not included).
+Not production. MediaPipe pods/model are runtime-only in the engineering harness — not cleared for shipping.
 
-Source engineering PR: https://github.com/vsco/studio-next/pull/570
+Engineering PR: https://github.com/vsco/studio-next/pull/570
