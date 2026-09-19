@@ -33,7 +33,37 @@
 </head>
 <body>
 <main>
-  <p>
+  <div class="card" id="exec-summary">
+    <strong>Executive summary — Swift / RN vs Python, and MediaPipe</strong>
+    <p><strong>Compare vs Python (obama golden)</strong></p>
+    <table>
+      <thead>
+        <tr><th></th><th>Python</th><th>Swift CLI (Vision, macOS)</th><th>RN / studio-next (Vision, Debug sim)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Face width</td><td>~226 px</td><td>~226–227 ✓</td><td>~73 ⚠️ quirk</td></tr>
+        <tr><td>Mask size</td><td>~47k px</td><td>~44k (close)</td><td>~8k (too small)</td></tr>
+        <tr><td>Pixel diff</td><td>—</td><td>mean ~0.09 · max 54</td><td>mean ~0.15 · max 73</td></tr>
+      </tbody>
+    </table>
+    <p>Swift CLI is the real port: same classical core, geometry matches Python closely enough for a PoC. RN uses that same core, but on the <strong>simulator</strong> Vision landmarks shrink the oval (~3×), so the mask/diff look worse — treat that as an iOS-sim quirk, not “RN is a worse algorithm.” Release/device + the macOS Vision path are the fidelity reference.</p>
+    <p><strong>MediaPipe or Vision?</strong> You don’t need MediaPipe for product. <strong>Ship Vision (Apple frameworks only)</strong> as the default — intended production landmarker, no third-party redistributable, and macOS Vision already sits ~0.85–0.88 IoU vs Python (gap is forehead/nostril approximations + unported stages, not a dead end).</p>
+    <p>MediaPipe is only a <strong>parity bridge</strong>: it matches Python almost exactly (IoU ~0.95) because it shares the landmark source. Keep it optional / legal-gated for A/B against Shiyu’s goldens — not required for the Etho / Studio Pro path.</p>
+  </div>
+<div class="card" id="rn-quirk-fix">
+    <strong>RN face-width “issue” — root cause &amp; fix</strong>
+    <p><strong>Verdict:</strong> Not a React Native / Expo wiring bug. Vision on the <em>iOS simulator</em> (forced <code>usesCPUOnly</code>) returns a shrunken landmark mesh (~73 px face width vs ~226). Same Swift sources and JPEG: MediaPipe-sim and Vision-macOS stay ~225–226; Vision-sim collapses in both the RN AppDelegate smoke and the Metro-free <code>simctl</code> harness.</p>
+    <p><strong>How we fix it</strong></p>
+    <ol>
+      <li>Do not gate geometry fidelity on Vision-sim — use macOS Vision smoke (and MediaPipe-sim for landmark parity) as references.</li>
+      <li>Confirm on a <strong>physical device</strong> (no <code>usesCPUOnly</code>). Expect ~226 / ~165; if so, no production code change.</li>
+      <li>Optional: tag sim <code>report.json</code> with <code>vision_sim_degraded</code> so RN Debug doesn’t look “broken.”</li>
+      <li>No RN/TS or ImageIO orientation change required for this quirk. MediaPipe is not needed to “fix” RN.</li>
+    </ol>
+    <p class="muted">Full dig notes: <a href="assets/rn-face-width-quirk-dig.md">rn-face-width-quirk-dig.md</a></p>
+  </div>
+
+<p>
     <span class="badge">TEMP PoC</span>
     <span class="badge">Not production</span>
     <span class="badge">Vision landmarker</span>
@@ -64,37 +94,8 @@
   </div>
 
   
-  <div class="card" id="exec-summary">
-    <strong>Executive summary — Swift / RN vs Python, and MediaPipe</strong>
-    <p><strong>Compare vs Python (obama golden)</strong></p>
-    <table>
-      <thead>
-        <tr><th></th><th>Python</th><th>Swift CLI (Vision, macOS)</th><th>RN / studio-next (Vision, Debug sim)</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Face width</td><td>~226 px</td><td>~226–227 ✓</td><td>~73 ⚠️ quirk</td></tr>
-        <tr><td>Mask size</td><td>~47k px</td><td>~44k (close)</td><td>~8k (too small)</td></tr>
-        <tr><td>Pixel diff</td><td>—</td><td>mean ~0.09 · max 54</td><td>mean ~0.15 · max 73</td></tr>
-      </tbody>
-    </table>
-    <p>Swift CLI is the real port: same classical core, geometry matches Python closely enough for a PoC. RN uses that same core, but on the <strong>simulator</strong> Vision landmarks shrink the oval (~3×), so the mask/diff look worse — treat that as an iOS-sim quirk, not “RN is a worse algorithm.” Release/device + the macOS Vision path are the fidelity reference.</p>
-    <p><strong>MediaPipe or Vision?</strong> You don’t need MediaPipe for product. <strong>Ship Vision (Apple frameworks only)</strong> as the default — intended production landmarker, no third-party redistributable, and macOS Vision already sits ~0.85–0.88 IoU vs Python (gap is forehead/nostril approximations + unported stages, not a dead end).</p>
-    <p>MediaPipe is only a <strong>parity bridge</strong>: it matches Python almost exactly (IoU ~0.95) because it shares the landmark source. Keep it optional / legal-gated for A/B against Shiyu’s goldens — not required for the Etho / Studio Pro path.</p>
-  </div>
-
-  <div class="card" id="rn-quirk-fix">
-    <strong>RN face-width “issue” — root cause &amp; fix</strong>
-    <p><strong>Verdict:</strong> Not a React Native / Expo wiring bug. Vision on the <em>iOS simulator</em> (forced <code>usesCPUOnly</code>) returns a shrunken landmark mesh (~73 px face width vs ~226). Same Swift sources and JPEG: MediaPipe-sim and Vision-macOS stay ~225–226; Vision-sim collapses in both the RN AppDelegate smoke and the Metro-free <code>simctl</code> harness.</p>
-    <p><strong>How we fix it</strong></p>
-    <ol>
-      <li>Do not gate geometry fidelity on Vision-sim — use macOS Vision smoke (and MediaPipe-sim for landmark parity) as references.</li>
-      <li>Confirm on a <strong>physical device</strong> (no <code>usesCPUOnly</code>). Expect ~226 / ~165; if so, no production code change.</li>
-      <li>Optional: tag sim <code>report.json</code> with <code>vision_sim_degraded</code> so RN Debug doesn’t look “broken.”</li>
-      <li>No RN/TS or ImageIO orientation change required for this quirk. MediaPipe is not needed to “fix” RN.</li>
-    </ol>
-    <p class="muted">Full dig notes: <a href="assets/rn-face-width-quirk-dig.md">rn-face-width-quirk-dig.md</a></p>
-  </div>
-
+  
+  
   <h2>2. Metrics (obama)</h2>
   <div class="card">
     <table>
