@@ -82,8 +82,9 @@
   </div>
 
   <div class="card warn">
-    <strong>RN face-width quirk</strong>
-    <p>Same golden JPEG, but the Debug simulator run reported ~73 px face width vs ~226 on Swift CLI / Python. That shrinks the mask and worsens the vs-Python diff. Treat <strong>Swift CLI</strong> as the geometry reference until this is fixed. Debug classical time is also ~50× slower than Release — use Release for product timing.</p>
+    <strong>RN face-width quirk (open)</strong>
+    <p>Same golden JPEG, but the Debug simulator run reported ~73 px <code>face_width_px_min</code> (from the classical oval) vs ~226 on Swift CLI / Python. That shrinks the mask and worsens the vs-Python diff.</p>
+    <p>Follow-up dig (2026-09-19): outside the app, Vision’s own bounding-box width on the identical Documents JPEG and on the RN-written <code>before.png</code> is ~270–277 px on both — so the input file is fine. The shrink happens inside the iOS sim path when building <code>PocFaceLandmarks</code> / oval width (likely coordinate-space). Treat <strong>Swift CLI</strong> as the geometry reference until fixed. Debug classical time is also ~50× slower than Release — use Release for product timing.</p>
   </div>
 
   <h2>3. Contact strips (before | python | vision)</h2>
