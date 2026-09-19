@@ -63,6 +63,25 @@
     </div>
   </div>
 
+  
+  <div class="card" id="exec-summary">
+    <strong>Executive summary — Swift / RN vs Python, and MediaPipe</strong>
+    <p><strong>Compare vs Python (obama golden)</strong></p>
+    <table>
+      <thead>
+        <tr><th></th><th>Python</th><th>Swift CLI (Vision, macOS)</th><th>RN / studio-next (Vision, Debug sim)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Face width</td><td>~226 px</td><td>~226–227 ✓</td><td>~73 ⚠️ quirk</td></tr>
+        <tr><td>Mask size</td><td>~47k px</td><td>~44k (close)</td><td>~8k (too small)</td></tr>
+        <tr><td>Pixel diff</td><td>—</td><td>mean ~0.09 · max 54</td><td>mean ~0.15 · max 73</td></tr>
+      </tbody>
+    </table>
+    <p>Swift CLI is the real port: same classical core, geometry matches Python closely enough for a PoC. RN uses that same core, but on the <strong>simulator</strong> Vision landmarks shrink the oval (~3×), so the mask/diff look worse — treat that as an iOS-sim quirk, not “RN is a worse algorithm.” Release/device + the macOS Vision path are the fidelity reference.</p>
+    <p><strong>MediaPipe or Vision?</strong> You don’t need MediaPipe for product. <strong>Ship Vision (Apple frameworks only)</strong> as the default — intended production landmarker, no third-party redistributable, and macOS Vision already sits ~0.85–0.88 IoU vs Python (gap is forehead/nostril approximations + unported stages, not a dead end).</p>
+    <p>MediaPipe is only a <strong>parity bridge</strong>: it matches Python almost exactly (IoU ~0.95) because it shares the landmark source. Keep it optional / legal-gated for A/B against Shiyu’s goldens — not required for the Etho / Studio Pro path.</p>
+  </div>
+
   <h2>2. Metrics (obama)</h2>
   <div class="card">
     <table>
